@@ -2,6 +2,10 @@
 import { HomeCatalogMenu } from "./HomeCatalogMenu"
 import { HomeCatalogPreview } from "./HomeCatalogPreview"
 import { useState } from "react";
+import { BASE_URL } from "../../config/api";
+
+// Количество загружаемых товаров по клику по кнопке "Загрузить ещё":
+const countFetchGoods = 6 ;
 
 export const HomeCatalog = ({categories , goodsAll})=> {
    
@@ -14,6 +18,11 @@ export const HomeCatalog = ({categories , goodsAll})=> {
     const[ previewList , setPreviewList] = useState(goodsAll)  
     // выбранная категория товаров  
     const[ selected , setSelected] = useState({id:1, title:'Все'});
+
+
+    // Данные для показа/скрытия кнопки "Загрузить ещё".
+    // Сохраняем  в состоянии длину массива подгружаемых данных:
+    const [countCurrentGoods , setCountCurrentGoods]= useState(countFetchGoods);
    
     const onSelectFilter = ( filter , data )=> {
         // При нажатии на кнопку меню:       
@@ -23,9 +32,62 @@ export const HomeCatalog = ({categories , goodsAll})=> {
         setSelected(filter);
           // 2. Фиксируем объект с товарами по выбранной категории в previewList :
         setPreviewList(data)
-   
+        // 3. Обновляем состояние для кнопки "Загрузить ещё"
+        setCountCurrentGoods(countFetchGoods)
     }
 
+    // **********************************************
+    // Подгрузка данных ( кнопка "Загрузить ещё"):
+ 
+    // счётчик догрузки данных
+    const [next , setNext] = useState(countFetchGoods);
+
+    // Функция догрузки товаров для ВСЕГО списка (/api/items?offset=6):
+    const addGoodsAll = async (nextOffset) => {
+        const resp = await fetch(BASE_URL + `/api/items?offset=${nextOffset}`);
+        const data = await resp.json();
+        console.log( "Догружены данные - ", data);
+        // дополняем массив с товарами новыми данными:
+        const newGoods = [ ...previewList, ...data];
+        console.log( " data length - " , data.length)
+        // сохраняем длину массива новых данных
+        setCountCurrentGoods(data.length)
+        // сохраняем новый , дополненный массив в константу в состоянии .
+        setPreviewList(newGoods);
+        
+    }
+
+    // Функция догрузки товаров ПО КАТЕГОРИЯМ : /api/items?categoryId=X&offset=6
+    const addGoodsCaregory = async (categoryId, nextOffset) => {
+        const url = BASE_URL + `/api/items?categoryId=${categoryId}&offset=${nextOffset}`;
+        console.log ('Url загрузки - ', url)
+        const resp = await fetch(url);
+        const data = await resp.json();
+        console.log( "Догружены данные - ", data);
+        const newGoods = [ ...previewList, ...data];
+        console.log( " data length - " , data.length)
+        setCountCurrentGoods(data.length)
+        setPreviewList(newGoods);
+        
+    }
+
+    // Обработчик клика по кнопке "Загрузить ещё"
+    const handleButtonClick = (currentCategoryId)=>{
+        console.log("currentCategoryId - ", currentCategoryId);
+
+        if(currentCategoryId === 1) {
+            addGoodsAll(next);
+        } else {
+            addGoodsCaregory(currentCategoryId, next)
+        };
+       
+        setNext( next + countFetchGoods)
+    }
+
+
+    // ********************************
+
+    // список товаров на отрисовку:
     console.log ('HomeCatalog previewList -', previewList );
 
     return (
@@ -38,7 +100,18 @@ export const HomeCatalog = ({categories , goodsAll})=> {
                     selected={selected}
                     onSelectFilter={onSelectFilter}
                 />            
-                <HomeCatalogPreview previewList ={previewList}/>                   
+                <HomeCatalogPreview previewList ={previewList}/>  
+
+                <div className="text-center">
+                <button     
+                    style={{ visibility: (countCurrentGoods < countFetchGoods) || 
+                        (previewList.length < countFetchGoods) ? 'hidden' :  'visible' }}
+                    className="button-more"
+                    onClick={()=>handleButtonClick(selected.id)}>
+                        Загрузить ещё
+                 </button>   
+                </div>
+              
             </div>              
         </section>
     )
@@ -46,90 +119,3 @@ export const HomeCatalog = ({categories , goodsAll})=> {
 
 
 
-// import { useState } from "react"
-// import { useGetFetch } from "../../hook/useGetFetch"
-// import { HomeCatalogMenu } from "./HomeCatalogMenu";
-// import { HomeCatalogPreview } from "./HomeCatalogPreview";
-
-// export const HomeCatalog = ({categories , goodsAll})=> {
-
-//     // Список названий кнопок меню:
-//     const[categories, loadingCategories, errorCategories ]= useGetFetch('/api/categories');
-
-//     // первая отрисовка из каталога товаров:
-//     const [goods , loadingGoods, errorGoods]= useGetFetch('/api/items')
-    
-//     if (categories) {
-//         categories.unshift({id:1 , title:"Все"});               
-//     };
-
-//         // Выбранная кнопка
-//     // const [selected, setSelected]= useState(categories[0])
-
-//     // const onSelectCategory = (categor)=> {
-//     //     setSelected(categor)
-//     // }
-
-//     console.log('HomeCatalog categories - ', categories);
-//     // console.log('HomeCatalog selected - ', selected)
-//     console.log('HomeCatalog goods - ', goods);
-
-   
-
-
-//     return(
-//         <div className="home-catalog">
-//             { categories && 
-//                 <HomeCatalogMenu  
-//                     categories={categories}  
-//                     // selected={selected}  
-//                     // onSelectCategory={onSelectCategory}                            
-//                 />
-//             }
-//             { goods && <HomeCatalogPreview goods={goods}/>
-
-//             }
-//         </div>
-//     )
-// }
-
-
-// import { useState } from 'react';
-// import ProjectList from '../ProjectList/ProjectList.jsx';
-// import Toolbar from '../Toolbar/Toolbar.jsx';
-// import { list , filters } from '../../data.js';
-
-// // filters = ["All", "Websites", "Flayers", "Business Cards"];
- 
-// const Portfolio = () => {
-//     // Функция состояния для фильтров:
-//     const [filterState, setFilter]= useState(list);
-//     const [selected, setSelected]= useState(filters[0])
-
-//     console.log ('Текущее значение фильтра -', filterState)
-    
-//     const onSelectFilter = (filter) => {
-  
-//         setSelected(filter);
-//         setFilter (
-//           filter === filters[0] ?
-//             list :
-//             list.filter( item => item.category === filter)
-//         )
-
-//     }
- 
-//     return (   
-//         <>
-//         <Toolbar
-//             filters={filters}
-//             selected={selected }
-//             onSelectFilter={onSelectFilter}/>
-            
-//          < ProjectList projects = {filterState}/>
-//         </>
-//     )
-// }
-
-
-// export default Portfolio

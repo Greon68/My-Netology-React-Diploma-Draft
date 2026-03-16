@@ -48,7 +48,7 @@ export const TopSales = ()=> {
       <div className="top-sales-block">
           {loading && <Loader/>}
           { error && <div> Ошибка...</div>}
-          { sales && sales.map ( sale => < CardView key={sale.id} {...sale} />)}
+          { sales && sales.map ( sale => < CardView key={sale.id} className="top-sales-card" {...sale} />)}
       </div>
   )
 

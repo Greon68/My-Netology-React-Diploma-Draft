@@ -5,6 +5,8 @@ export const HomeCatalogMenu =(props)=> {
     // console.log('HomeCatalogMenu props -', props);
     const {categories, selected, onSelectFilter} = props;
 
+    // По клику по кнопке фиксируем выбранную категорию 
+    // и загружаем данные для этой категории:
     const handleClick = async (item)=> {
         if(item.id!==1) {
             const resp = await fetch(BASE_URL + `/api/items?categoryId=${item.id}`);

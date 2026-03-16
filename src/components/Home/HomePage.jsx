@@ -17,15 +17,18 @@ export const HomePage = ()=> {
                 <h2 className="banner-header">К весне готовы!</h2>
             </div>
             <section className="top-sales">
-                <h1 className="text-center">Хиты продаж!</h1>
+                <h2 className="text-center">Хиты продаж!</h2>
                 {/* <Loader/> */}
                 <TopSales/>
                 
             </section>
             <section className="catalog">
-                <h1 className="text-center">Каталог</h1>
+                <h2 className="text-center">Каталог</h2>
                 {/* <Loader/> */}
                 <HomeCatalogData/>
+                {/* <div class="text-center">
+                    <button class="btn btn-outline-primary">Загрузить ещё</button>
+                </div> */}
                 
             </section>
            
