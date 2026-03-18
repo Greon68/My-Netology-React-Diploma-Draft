@@ -1,8 +1,8 @@
 import { BASE_URL } from "../../config/api";
 
-export const HomeCatalogMenu =(props)=> {
+export const CatalogMenu =(props)=> {
 
-    // console.log('HomeCatalogMenu props -', props);
+    // console.log('CatalogMenu props -', props);
     const {categories, selected, onSelectFilter} = props;
 
     // По клику по кнопке фиксируем выбранную категорию 
@@ -10,16 +10,19 @@ export const HomeCatalogMenu =(props)=> {
     const handleClick = async (item)=> {
         if(item.id!==1) {
             const resp = await fetch(BASE_URL + `/api/items?categoryId=${item.id}`);
+            // data-массив объектов товаров для выбранной категории:
             const data = await resp.json();
             onSelectFilter(item, data)
         } else {
             const resp = await fetch(BASE_URL + `/api/items`);
+            // data- массив объектов ВСЕХ товаров :
             const data = await resp.json();
+            // item - объект выбранной кнопки ( напр.: { id:12 , title:"Женская обувь"})
             onSelectFilter(item, data)
         }      
     }
 
-    // console.log('HomeCatalogMenu categories -', categories);
+    // console.log('CatalogMenu categories -', categories);
     return (
         <ul className="home-catalog-menu">
             {

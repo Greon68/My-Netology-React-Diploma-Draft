@@ -14,7 +14,7 @@ export const useGetFetch = ( path='/') => {
           
           const result = await response.json();
 
-          console.log('useGetFetch result: ', result);
+        //   console.log('useGetFetch result: ', result);
 
           if(response.status > 399){
             throw result

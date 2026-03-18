@@ -1,6 +1,6 @@
 import { CardView } from "./CardView";
 
-export const HomeCatalogPreview = (props)=>{
+export const CatalogPreview = (props)=>{
     console.log('HomeCatalogPreview props-', props);
 
     const {previewList} = props

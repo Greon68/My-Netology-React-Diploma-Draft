@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Image } from "../../../img/Image"
 import { Loader } from "../Loader/Loader"
 import { HomeCatalog } from "./HomeCatalog";
-import { HomeCatalogData } from "./HomeCatalogData";
+import { CatalogData } from "./CatalogData";
 import { TopSales } from "./TopSales";
 
 export const HomePage = ()=> {
@@ -25,10 +25,7 @@ export const HomePage = ()=> {
             <section className="catalog">
                 <h2 className="text-center">Каталог</h2>
                 {/* <Loader/> */}
-                <HomeCatalogData/>
-                {/* <div class="text-center">
-                    <button class="btn btn-outline-primary">Загрузить ещё</button>
-                </div> */}
+                <CatalogData/>
                 
             </section>
            
