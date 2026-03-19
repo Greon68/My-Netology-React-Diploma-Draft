@@ -1,6 +1,9 @@
-
+import { Link, NavLink} from "react-router"
+import { PRODUCT_ROUT } from "../../router/routes"
 
 export const CardView = ({images, title, price, category, id} )=> {
+
+  
     return (
         <div className="card">
 
@@ -12,7 +15,7 @@ export const CardView = ({images, title, price, category, id} )=> {
                 <p className="card-text">Id товара - {id}</p>
                 <p className="card-text">Категория - {category}</p>
 
-                <a href="" className="btn btn-outline-primary">Заказать</a>
+                <Link to={`/catalog/${id}`} className="btn btn-outline-primary">Заказать</Link>
             </div>
 
         </div>

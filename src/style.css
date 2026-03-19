@@ -464,6 +464,30 @@ h2, .h2 {
   
 }
 
-/* .top-sales-card {
+/* Таблица */
+.table,
+.product-info,
+.btn-my {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+tr,
+td,
+.catalog-item {
+  padding: 10px;
+};
+
+.btn-my {
   width: 100%;
-} */
+  color: white;
+  background-color: hotpink;
+}
+
+.img-fluid {
+  max-width: 550px;
+  max-height: 550px;
+  min-width: 500px;
+}
+
+
