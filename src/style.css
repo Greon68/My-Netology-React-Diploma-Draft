@@ -22,9 +22,6 @@ section {
   margin-bottom: 2em;
 }
 
-
-
-
 /* Common Styles */
 .invisible {
   opacity: 0;
@@ -229,6 +226,7 @@ section {
 .catalog-item-size {
   display: inline-block;
   padding: 0 10px;
+  cursor: pointer;
 }
 
 .catalog-item-size.selected {
@@ -367,6 +365,7 @@ h2, .h2 {
 }
 
 .active {
+  color: red;
   background-color: lightcyan;
 }
 
@@ -431,10 +430,6 @@ h2, .h2 {
   list-style: none;
 }
 
-.active {
-  color: red;
-}
-
 /* *************** */
 
 
@@ -453,15 +448,20 @@ h2, .h2 {
 }
 
 /* кнопка "Загрузить ещё" */
-.button-more {
+.button-more,
+.button-product {
   padding: 5px 10px;
   border-radius: 5px;
   color: chocolate;
   border: 1px, solid, chocolate;
   background-color: rgb(249, 244, 236);
   font-size: 16px;
-  margin-top: 15px;
+  /* margin-top: 15px; */
   
+}
+
+.button-more {
+  margin-top: 15px;
 }
 
 /* Таблица */
@@ -484,10 +484,15 @@ td,
   background-color: hotpink;
 }
 
-.img-fluid {
+.img-product {
   max-width: 550px;
   max-height: 550px;
   min-width: 500px;
+  margin-top: 10px;
 }
 
+.product-container {
+  display: flex;
+  align-items:center
+}
 

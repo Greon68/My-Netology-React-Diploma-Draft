@@ -5,8 +5,12 @@ import { BASE_URL } from "../../config/api";
 
 export const Product = ()=>{
     const{id} = useParams();
+    // Объект товара:
     const [product, setProduct]= useState({});
+    // Счётчик количества заказываемого товара:
     const [count , setCount]=useState(1)
+    // Индикатор выбора размера товара:
+    const [active , setActive]= useState(false)
 
     const getProduct = async()=> {
         const resp = await fetch(`${BASE_URL}/api/items/${id}`);
@@ -30,21 +34,23 @@ export const Product = ()=>{
         if(count<=1){setCount(1)}
     }
 
+    const toggle =()=>{
+        setActive(prev => !prev)
+    }
+
     console.log(" Product product", product);
     console.log(" Product product.images- ", product.images)
-    // 'https://raw.githubusercontent.com/netology-code/ra…iploma/master/html/img/products/tufli_labuten.jpg',
-    //  'https://raw.githubusercontent.com/netology-code/ra…loma/master/html/img/products/tufli_labuten_2.jpg'
- 
+    
     return (
         <> 
         { product && 
 
             <section className="catalog-item">
                 <h2 className="text-center">{product.title}</h2>
-                <div className="row">
+                <div className="row product-container">
                     <div className="col-5">
                        {product.images && 
-                       <img src={product.images[0]} className="img-fluid" alt={product.title}/>} 
+                            <img src={product.images[0]} className="img-product" alt={product.title}/>} 
                     </div>
                     <div className="col-7">
                         <table className="table table-bordered">
@@ -77,8 +83,19 @@ export const Product = ()=>{
                         </table>
                        
                             <div className="text-center product-info">Размеры в наличии : 
-                                <span className="catalog-item-size selected"> 18 US </span>
-                                 <span className="catalog-item-size"> 20 US </span>
+                                {/* <span className="catalog-item-size selected"> 18 US </span>
+                                 <span className="catalog-item-size"> 20 US </span> */}
+                                 {
+                                    product.sizes && product.sizes.map( item => (
+                                        item.available &&  <span
+                                                             className={ active ? 
+                                                                "catalog-item-size selected":"catalog-item-size"}
+                                                             onClick={ toggle}
+                                                           > 
+                                                             {item.size} 
+                                                           </span>
+                                    ))
+                                 }
                             </div> 
                             <div className="text-center product-info">Количество :
                                  <span className="btn-group btn-group-sm pl-2">
@@ -95,7 +112,11 @@ export const Product = ()=>{
                                 </span>
                             </div>
                         <div className="text-center btn-my">
-                            <button className=" btn-danger ">В корзину</button>
+                            <button className={active ?
+                                        " btn btn-danger btn-block btn-lg button-product" : "btn btn-danger btn-block btn-lg"
+                                    }>
+                                В корзину
+                            </button> 
                         </div>
                         
                     </div> 
