@@ -4,9 +4,9 @@ export const CATALOG_ROUT = '/catalog';
 export const ABOUTE_ROUT='/about';
 
 export const PRODUCT_ROUT='/catalog/:id';
+export const CART_ROUT='/cart';
 
 export const NOD_FOUND_ROUT = '*';
 
-export const ROUT =()=> {
-    
-}
+// на удаление
+export const Rout =()=> {}

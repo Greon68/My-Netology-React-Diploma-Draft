@@ -8,14 +8,12 @@ import { TopSales } from "./TopSales";
 export const HomePage = ()=> {
 
     return(
-        <>
-         {/* <h2>HomePage</h2> */}
-       
+        <>      
          <div className="container">         
-            <div className="banner">
+            {/* <div className="banner">
                 <img  src="../../../img/banner.jpg" className="img-fluid" alt="К весне готовы!"/>
                 <h2 className="banner-header">К весне готовы!</h2>
-            </div>
+            </div> */}
             <section className="top-sales">
                 <h2 className="text-center">Хиты продаж!</h2>
                 {/* <Loader/> */}
