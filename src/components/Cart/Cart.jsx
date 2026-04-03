@@ -1,13 +1,18 @@
+/* Корзина товаров */
 
+export const Cart = (props)=> {
 
-export const Cart = ()=> {
+  console.log("Корзина  props ", props)
+
+  // Обратимся в localStorage
+  console.log("Cart : localStorage.getItem('name')-", localStorage.getItem('name'));
 
     return (
 
         <>
-            <section className="cart">
+          <section className="cart text-center">
             <h2 className="text-center">Корзина</h2>
-            <table className="table table-bordered">
+            <table className="table table-bordered ">
               <thead>
                 <tr>
                   <th scope="col">#</th>
@@ -39,21 +44,21 @@ export const Cart = ()=> {
           <section className="order">
             <h2 className="text-center">Оформить заказ</h2>
             {/* <div className="card" style="max-width: 30rem; margin: 0 auto;"> */}
-            <div className="card" style={{maxWidth: '30rem', margin:' 0 auto'}}>
+            <div className="card card-form" style={{maxWidth: '130rem', margin:' 0 auto'}}>
               <form className="card-body">
                 <div className="form-group">
-                  <label htmlFor="phone">Телефон</label>
+                  <label htmlFor="phone">Телефон : </label>
                   <input className="form-control" id="phone" placeholder="Ваш телефон"/>
                 </div>
                 <div className="form-group">
-                  <label htmlFor="address">Адрес доставки</label>
+                  <label htmlFor="address">Адрес доставки : </label>
                   <input className="form-control" id="address" placeholder="Адрес доставки"/>
                 </div>
                 <div className="form-group form-check">
                   <input type="checkbox" className="form-check-input" id="agreement"/>
                   <label className="form-check-label" htmlFor="agreement">Согласен с правилами доставки</label>
                 </div>
-                <button type="submit" className="btn btn-outline-secondary">Оформить</button>
+                <button type="submit" className="btn btn-outline-secondary btn-form">Оформить</button>
               </form>
             </div>
           </section>
@@ -62,3 +67,21 @@ export const Cart = ()=> {
 
     )
 }
+
+// Блок оформления заказа позволяет оформить заказ — POST http://localhost:7070/api/order.
+
+// В теле — JSON:
+
+// {
+//   "owner": {
+//     "phone": "+7xxxxxxxxxxx",
+//     "address": "Moscow City"
+//   },
+//   "items": [
+//     {
+//       "id": 1,
+//       "price": 34000,
+//       "count": 1
+//     }
+//   ]
+// }

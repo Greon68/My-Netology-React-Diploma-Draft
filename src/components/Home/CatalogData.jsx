@@ -2,7 +2,7 @@ import { useGetFetch } from "../../hook/useGetFetch";
 import { HomeCatalog } from "./HomeCatalog";
 
 
-export const CatalogData = ({search={}})=> {
+export const CatalogData = ()=> {
 
     // 1.Получаем список кнопок :
     const[categories, loadingCategories, errorCategories ]= useGetFetch('/api/categories');
@@ -19,7 +19,7 @@ export const CatalogData = ({search={}})=> {
             { errorCategories && <div> Ошибка загрузки списка категорий...</div>}
             {loadingGoodsAll && <div> Загрузка массива товаров...</div>}
             { errorGoodsAll && <div> Ошибка загрузки массива товаров ...</div>}
-            {categories && goodsAll &&  <HomeCatalog categories={categories} goodsAll={goodsAll} search={search}/> }
+            {categories && goodsAll &&  <HomeCatalog categories={categories} goodsAll={goodsAll} /> }
         </>
     )
 

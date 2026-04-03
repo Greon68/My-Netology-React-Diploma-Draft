@@ -1,7 +1,7 @@
 
 import { Link, NavLink} from "react-router"
 import { Image } from "../../../img/Image"
-import { ABOUTE_ROUT, CATALOG_ROUT, CONTACTS_ROUT } from "../../router/routes"
+import { ABOUTE_ROUT, CATALOG_ROUT, CONTACTS_ROUT, CART_ROUT } from "../../router/routes"
 
 
 export const MainMenu =()=> {
@@ -26,15 +26,26 @@ export const MainMenu =()=> {
                         onClick={()=>{console.log("Клик по лупе")}}
                         >
                   </div>
+                  
                   {/* КОРЗИНА */}
-                  <div 
+                  <Link 
+                      className="header-controls-pic header-controls-cart" 
+                      to={CART_ROUT}
+                      onClick={()=> console.log("Клик по корзине")}
+                      > 
+                    <div className="header-controls-cart-full">1</div>
+                    <div className="header-controls-cart-menu"></div>
+
+                  </Link>
+                  {/* <div 
                     className="header-controls-pic header-controls-cart"
                     onClick={()=> console.log("Клик по корзине")}
                     >
-                      {/* Выполняйте программную навигацию по щелчку мыши, чтобы /cart.html */}
+                      Выполняйте программную навигацию по щелчку мыши, чтобы /cart.html 
                     <div className="header-controls-cart-full">1</div>
                     <div className="header-controls-cart-menu"></div>
-                  </div>
+                  </div> */}
+
                 </div>
                 {/* ПОЛЕ ПОИСКА - Форма */}
                 <form 

@@ -2,6 +2,14 @@ import {useParams, useNavigate} from "react-router";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../config/api";
 
+import { Link, NavLink} from "react-router";
+import  {CART_ROUT} from "../../router/routes";
+import { SizesListPreview } from "./SizesListPreview";
+import { Cart } from "../Cart/Cart";
+
+
+//Рабочий массив размеров, имеющихся в наличии для данного продукта:
+const sizeListWorking =[];
 
 export const Product = ()=>{
     const{id} = useParams();
@@ -9,20 +17,41 @@ export const Product = ()=>{
     const [product, setProduct]= useState({});
     // Счётчик количества заказываемого товара:
     const [count , setCount]=useState(1)
-    // Индикатор выбора размера товара:
-    const [active , setActive]= useState(false)
+    // Есть ли в наличии размеры для текущего товара:
+    const [sizesAvailable, setSizesAvailable]= useState(true);
+    // Массив размеров товара в наличии
+    const [sizeList , setSizeList]= useState([]);
+    // Выбранный размер:
+    const[selectedSize, setSelectedSize]=useState('');
+    
 
     const getProduct = async()=> {
         const resp = await fetch(`${BASE_URL}/api/items/${id}`);
         if(resp.ok){
             const data = await resp.json();
-            setProduct(data)
+            setProduct(data);
+            // Проверка на наличие хотя бы одного размера для данного товара:
+            const available = data.sizes.some((item) => item.available=== true);
+            setSizesAvailable(available);
+
+            // Если размеры для данного товара есть в наличии , то :
+            if(available){
+                data.sizes.map( item => {
+                    if(item.available) {
+                        // Заполняем список размеров товара значениями :
+                         sizeListWorking.push(item.size)
+                    }
+                });
+                // Фиксируем имеющийся список размеров товара:
+                setSizeList(sizeListWorking)
+            }
+
         }
     }
 
     useEffect(()=> {
         getProduct()
-    },[id])
+    },[])
 
     const add = ()=> {
         setCount( prev => prev + 1);
@@ -34,17 +63,37 @@ export const Product = ()=>{
         if(count<=1){setCount(1)}
     }
 
-    const toggle =()=>{
-        setActive(prev => !prev)
+    // Сохраняем выбранный размер товара:
+    const onSelectedSize = (size)=> {
+        setSelectedSize(size)
     }
 
-    console.log(" Product product", product);
-    console.log(" Product product.images- ", product.images)
-    
+    // *************************************************************
+    // Обработчик клика на кнопку "В корзину":
+    const goToCart =()=>{
+        console.log("Click");
+       
+    }
+ 
+    console.log("Имеются ли в наличии размеры для данного товара (sizesAvailable) -", sizesAvailable)
+    console.log("Загружен продукт (product) -", product);
+    console.log("Список доступных размеров (sizeList) -", sizeList);
+    console.log("Выбран размер (selectedSize) - ", selectedSize );
+
+    // *********** проба работы с localStorage *********************************
+ 
+    // const onClickCart =()=> {
+    //     console.log("Переход в корзину");
+    //     localStorage.setItem('name',"Goga")
+    //     localStorage.getItem('name');
+    //     console.log("localStorage.getItem('name')-", localStorage.getItem('name'));     
+    // }
+
+    // ****************************************************************************
+
     return (
         <> 
         { product && 
-
             <section className="catalog-item">
                 <h2 className="text-center">{product.title}</h2>
                 <div className="row product-container">
@@ -55,6 +104,10 @@ export const Product = ()=>{
                     <div className="col-7">
                         <table className="table table-bordered">
                             <tbody>
+                                <tr>
+                                    <td>ID </td>
+                                    <td> {product.id}</td>
+                                </tr>
                                 <tr>
                                     <td>Артикул </td>
                                     <td> {product.sku}</td>
@@ -81,56 +134,61 @@ export const Product = ()=>{
                                 </tr>
                             </tbody>
                         </table>
-                       
-                            <div className="text-center product-info">Размеры в наличии : 
-                                {/* <span className="catalog-item-size selected"> 18 US </span>
-                                 <span className="catalog-item-size"> 20 US </span> */}
-                                 {
-                                    product.sizes && product.sizes.map( item => (
-                                        item.available &&  <span
-                                                             className={ active ? 
-                                                                "catalog-item-size selected":"catalog-item-size"}
-                                                             onClick={ toggle}
-                                                           > 
-                                                             {item.size} 
-                                                           </span>
-                                    ))
-                                 }
-                            </div> 
-                            <div className="text-center product-info">Количество :
-                                 <span className="btn-group btn-group-sm pl-2">
-                                    <button 
-                                        className="btn btn-secondary"
-                                        onClick ={dec}
-                                        >-</button>
-                                    <span className="btn btn-outline-primary">{count}</span>
-                                    <button 
-                                        className="btn btn-secondary"
-                                        onClick={add}
 
-                                     >+</button>
-                                </span>
-                            </div>
-                        <div className="text-center btn-my">
-                            <button className={active ?
-                                        " btn btn-danger btn-block btn-lg button-product" : "btn btn-danger btn-block btn-lg"
-                                    }>
-                                В корзину
-                            </button> 
-                        </div>
+                        {/* Если нет ни одного размера в наличии: */}
+                        {!sizesAvailable && <h3 className="text-center">Товара нет в наличии</h3>}
                         
+                        {/* Если есть размеры в наличии: */}
+                        {/* Список имеющихся в наличии размеров */}
+                        { sizesAvailable &&   <>
+                            <SizesListPreview 
+                                sizeList={sizeList} 
+                                onSelectedSize={onSelectedSize}
+                                selectedSize={selectedSize}
+                            />
+                            {/* Блок "Количество" */}
+                            <div className="text-center product-info">Количество :
+                                    <span className="btn-group btn-group-sm pl-2">
+                                        <button 
+                                            className="btn btn-secondary"
+                                            onClick ={dec}
+                                            >-</button>
+                                        <span className="btn btn-outline-primary">{count}</span>
+                                        <button 
+                                            className="btn btn-secondary"
+                                            onClick={add}
+                                        >+</button>
+                                    </span>
+                            </div>
+                            {/* Корзина */}
+                            <div className="text-center btn-my">  
+                                { !selectedSize && <div className="btn btn-danger btn-block btn-lg">В корзину </div> } 
+                                { selectedSize &&                              
+                                    // <Link 
+                                        
+                                    //     to={{
+                                    //         pathname :'/cart'
+                                    //     }}
+                                    //     className="btn btn-danger btn-block btn-lg button-product"         
+                                    //     onClick={onClickCart}               
+                                    // >
+                                    //     В корзину
+                                    // </Link> 
+                                    <button onClick={goToCart}> В корзину </button>
+                                 }  
+                            </div>
+                        </> 
+                        }
                     </div> 
-                </div>
+                </div> 
 
             </section>
-
         }
-           
-            
-
         </>
     )
 }
+
+
 
 
 // {

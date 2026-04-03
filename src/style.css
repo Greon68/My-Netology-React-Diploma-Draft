@@ -238,6 +238,7 @@ section {
   display: inline-block;
   padding: 0 10px;
   cursor: pointer;
+  margin-left: 5px;
 }
 
 .catalog-item-size.selected {
@@ -507,3 +508,41 @@ td,
   align-items:center
 }
 
+/* Таблицы */
+table, 
+th, 
+td { 
+  border: 1px solid black; 
+  border-collapse: collapse; 
+}
+
+th , .form-control {
+  padding: 5px 10px;
+}
+
+.cart {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-form {
+  width: 25rem;
+}
+
+.form-group {
+  margin-top: 20px;
+  /* font-size: 20px; */
+}
+
+/* .form-control {
+  font-size: 20px;
+} */
+
+.form-check {
+  margin-bottom: 20px;
+}
+
+/* .btn-form {
+  font-size: 20px;
+} */

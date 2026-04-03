@@ -9,4 +9,5 @@ export const CART_ROUT='/cart';
 export const NOD_FOUND_ROUT = '*';
 
 // на удаление
-export const Rout =()=> {}
+ const RoutFunck =()=> {};
+ export default RoutFunck 

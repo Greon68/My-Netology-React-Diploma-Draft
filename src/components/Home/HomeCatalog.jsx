@@ -62,7 +62,7 @@ export const HomeCatalog = (props)=> {
             <div className="home-catalog">  
             
                 <CatalogMenu  
-                    categories={ categories}
+                    categories={categories}
                     selected={selected}
                     onSelectFilter={onSelectFilter}
                     
