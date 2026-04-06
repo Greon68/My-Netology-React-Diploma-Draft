@@ -126,10 +126,15 @@
     </footer>
     <script>
       // TODO: replace it with React!
+      // ЛУПА:
       const searchEl = document.querySelector('[data-id=search-expander]');
+      // ПОЛЕ ПОИСКА - Форма :
       const searchFormEl = document.querySelector('[data-id=search-form]');
+      // КЛИК ПО ЗНАЧКУ ЛУПЫ:
       searchEl.addEventListener('click', () => {
+        // переключаем поле поиска в состояния "видимое-невидимое"
           searchFormEl.classList.toggle('invisible');
+          // установка фокуса на элемент <input>
           searchFormEl.querySelector('input').focus();
       });
     </script>

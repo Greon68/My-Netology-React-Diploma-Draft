@@ -1,4 +1,6 @@
-
+/* 
+    РАБОТАЕМ С МАССИВОМ РАЗМЕРОВ ТЕКУЩЕГО ТОВАРА
+*/
 
 export const SizesListPreview = (props)=> {
 
@@ -29,8 +31,3 @@ export const SizesListPreview = (props)=> {
 
 }
 
-{/* <div class="text-center">
-<p>Размеры в наличии: <span class="catalog-item-size selected">18 US</span>
- <span class="catalog-item-size">20 US</span></p>
-
-</div> */}

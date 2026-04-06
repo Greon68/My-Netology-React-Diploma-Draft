@@ -1,195 +1,231 @@
-import {useParams, useNavigate} from "react-router";
+/* Компонент продукта  */
+import "./style.scss";
 import { useEffect, useState } from "react";
+import { useLocalStorage } from "@uidotdev/usehooks";
 import { BASE_URL } from "../../config/api";
-
-import { Link, NavLink} from "react-router";
-import  {CART_ROUT} from "../../router/routes";
 import { SizesListPreview } from "./SizesListPreview";
 import { Cart } from "../Cart/Cart";
-
+import { OrderInfoMessage } from "./OrderInfoMessage";
+import { ProductInfo } from "./ProductInfo";
+import { ProductImage } from "./ProductImage";
+import {useParams, useNavigate} from "react-router";
 
 //Рабочий массив размеров, имеющихся в наличии для данного продукта:
-const sizeListWorking =[];
+const sizeListWorking = [];
 
-export const Product = ()=>{
-    const{id} = useParams();
-    // Объект товара:
-    const [product, setProduct]= useState({});
-    // Счётчик количества заказываемого товара:
-    const [count , setCount]=useState(1)
-    // Есть ли в наличии размеры для текущего товара:
-    const [sizesAvailable, setSizesAvailable]= useState(true);
-    // Массив размеров товара в наличии
-    const [sizeList , setSizeList]= useState([]);
-    // Выбранный размер:
-    const[selectedSize, setSelectedSize]=useState('');
-    
+export const Product = () => {
+  const{id} = useParams();
 
-    const getProduct = async()=> {
-        const resp = await fetch(`${BASE_URL}/api/items/${id}`);
-        if(resp.ok){
-            const data = await resp.json();
-            setProduct(data);
-            // Проверка на наличие хотя бы одного размера для данного товара:
-            const available = data.sizes.some((item) => item.available=== true);
-            setSizesAvailable(available);
+  // Объект товара:
+  const [product, setProduct] = useState({});
+  // Счётчик количества заказываемого товара:
+  const [count, setCount] = useState(1);
+  // Есть ли в наличии размеры для текущего товара:
+  const [sizesAvailable, setSizesAvailable] = useState(true);
+  // Массив размеров товара в наличии:
+  const [sizeList, setSizeList] = useState([]);
+  // Выбранный размер:
+  const [selectedSize, setSelectedSize] = useState("");
+  // Показать/скрыть карзину товаров:
+  const [showCart, setShowCart] = useState(false);
+  // Нажата ли кнопка "Заказать":
+  const [orderActive, setOrderActive] = useState(false);
 
-            // Если размеры для данного товара есть в наличии , то :
-            if(available){
-                data.sizes.map( item => {
-                    if(item.available) {
-                        // Заполняем список размеров товара значениями :
-                         sizeListWorking.push(item.size)
-                    }
-                });
-                // Фиксируем имеющийся список размеров товара:
-                setSizeList(sizeListWorking)
-            }
+  // Подключаемся к локальному хранилищу браузера:
+  // Состояние для массива объектов заказов:
+  const [orders, setOrders] = useLocalStorage("orders", []);
 
-        }
+  // Функция загрузки данных о текущем товарк по сети:
+  const getProduct = async () => {
+    const resp = await fetch(`${BASE_URL}/api/items/${id}`);
+    if (resp.ok) {
+      const data = await resp.json();
+      setProduct(data);
+      // console.log("Объект товара data -", data);
+
+      // Проверка на наличие хотя бы одного размера для данного товара:
+      const available = data.sizes.some((item) => item.available === true);
+      setSizesAvailable(available);
+
+      // Если размеры для данного товара есть в наличии , то :
+      if (available) {
+        // Берём массив доступных размеров
+        data.sizes.map((item) => {
+          // выбираем те, что имеются в наличии:
+          if (item.available) {
+            // Заполняем список размеров товара значениями :
+            sizeListWorking.push(item.size);
+          }
+        });
+        // Фиксируем имеющийся список размеров товара в sizeList:
+        setSizeList(sizeListWorking);
+      }
     }
+  };
 
-    useEffect(()=> {
-        getProduct()
-    },[])
+  // Загружаем данные о текущем товаре при загрузке страницы:
+  useEffect(() => {
+    getProduct();
+  }, []);
 
-    const add = ()=> {
-        setCount( prev => prev + 1);
-        if(count>=10){ setCount(10)}
+  // Функция добавления заказа в LocalStorage:
+  const addToOrderInLocalStorage = () => {
+    // Фиксируем пару "товар-размер" для текущего заказа:
+    const orderId = product.id + " : " + selectedSize;
+    // console.log('orderId-',orderId , 'typeOf orderId- ', typeof orderId );
+
+    // Определяем полную стоимость для текущего заказа:
+    const priceTotal = product.price * count;
+
+    // Определяем , есть ли в хранилище заказ для данной пары:
+    const result = orders.find((order) => order.orderId === orderId);
+    console.log("result -", result);
+
+    // Если уже есть , то повторно заказ не сохраняем в хранилище
+    if (result) {
+      return;
     }
-
-    const dec = ()=> {
-        setCount(prev => prev -1);
-        if(count<=1){setCount(1)}
+    // Иначе, сохраняем объект заказа в localStorage и в переменной orders
+    else {
+      setOrders([
+        ...orders,
+        {
+          orderId: orderId,
+          id: product.id,
+          title: product.title,
+          price: product.price,
+          size: selectedSize,
+          count: count,
+          priceTotal: priceTotal,
+        },
+      ]);
     }
+  };
 
-    // Сохраняем выбранный размер товара:
-    const onSelectedSize = (size)=> {
-        setSelectedSize(size)
+  //   Счётчики количества товара:
+  const add = () => {
+    setCount((prev) => prev + 1);
+    if (count >= 10) {
+      setCount(10);
     }
+    // устанавливаем ordreActiv в false
+    setOrderActive(false);
+  };
 
-    // *************************************************************
-    // Обработчик клика на кнопку "В корзину":
-    const goToCart =()=>{
-        console.log("Click");
-       
+  const dec = () => {
+    setCount((prev) => prev - 1);
+    if (count <= 1) {
+      setCount(1);
     }
- 
-    console.log("Имеются ли в наличии размеры для данного товара (sizesAvailable) -", sizesAvailable)
-    console.log("Загружен продукт (product) -", product);
-    console.log("Список доступных размеров (sizeList) -", sizeList);
-    console.log("Выбран размер (selectedSize) - ", selectedSize );
+    // устанавливаем ordreActiv в false
+    setOrderActive(false);
+  };
 
-    // *********** проба работы с localStorage *********************************
- 
-    // const onClickCart =()=> {
-    //     console.log("Переход в корзину");
-    //     localStorage.setItem('name',"Goga")
-    //     localStorage.getItem('name');
-    //     console.log("localStorage.getItem('name')-", localStorage.getItem('name'));     
-    // }
+  // Сохраняем выбранный размер товара:
+  const onSelectedSize = (size) => {
+    setSelectedSize(size);
+    // устанавливаем ordreActiv в false
+    setOrderActive(false);
+  };
 
-    // ****************************************************************************
+  // Обработчик клика на кнопку "Показать/скрыть корзину":
+  const showOrHideCart = () => {
+    setShowCart((prev) => !prev);
+  };
 
-    return (
-        <> 
-        { product && 
-            <section className="catalog-item">
-                <h2 className="text-center">{product.title}</h2>
-                <div className="row product-container">
-                    <div className="col-5">
-                       {product.images && 
-                            <img src={product.images[0]} className="img-product" alt={product.title}/>} 
-                    </div>
-                    <div className="col-7">
-                        <table className="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>ID </td>
-                                    <td> {product.id}</td>
-                                </tr>
-                                <tr>
-                                    <td>Артикул </td>
-                                    <td> {product.sku}</td>
-                                </tr>
-                                <tr>
-                                    <td>Производитель </td>
-                                    <td> {product.manufacturer}</td>
-                                </tr>
-                                <tr>
-                                    <td>Цвет </td>
-                                    <td>{product.color}</td>
-                                </tr>
-                                <tr>
-                                    <td>Материалы </td>
-                                    <td> {product.material}</td>
-                                </tr>
-                                <tr>
-                                    <td>Сезон </td>
-                                    <td> {product.season}</td>
-                                </tr>
-                                <tr>
-                                    <td>Повод</td>
-                                    <td>{product.reason}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+  // Клик по кнопке "Заказать" устанавливаем ordreActiv в true
+  // и сохраняем объект заказа в localStorage:
+  const onOrder = () => {
+    addToOrderInLocalStorage();
+    setOrderActive((prev) => !prev);
+  };
 
-                        {/* Если нет ни одного размера в наличии: */}
-                        {!sizesAvailable && <h3 className="text-center">Товара нет в наличии</h3>}
-                        
-                        {/* Если есть размеры в наличии: */}
-                        {/* Список имеющихся в наличии размеров */}
-                        { sizesAvailable &&   <>
-                            <SizesListPreview 
-                                sizeList={sizeList} 
-                                onSelectedSize={onSelectedSize}
-                                selectedSize={selectedSize}
-                            />
-                            {/* Блок "Количество" */}
-                            <div className="text-center product-info">Количество :
-                                    <span className="btn-group btn-group-sm pl-2">
-                                        <button 
-                                            className="btn btn-secondary"
-                                            onClick ={dec}
-                                            >-</button>
-                                        <span className="btn btn-outline-primary">{count}</span>
-                                        <button 
-                                            className="btn btn-secondary"
-                                            onClick={add}
-                                        >+</button>
-                                    </span>
-                            </div>
-                            {/* Корзина */}
-                            <div className="text-center btn-my">  
-                                { !selectedSize && <div className="btn btn-danger btn-block btn-lg">В корзину </div> } 
-                                { selectedSize &&                              
-                                    // <Link 
-                                        
-                                    //     to={{
-                                    //         pathname :'/cart'
-                                    //     }}
-                                    //     className="btn btn-danger btn-block btn-lg button-product"         
-                                    //     onClick={onClickCart}               
-                                    // >
-                                    //     В корзину
-                                    // </Link> 
-                                    <button onClick={goToCart}> В корзину </button>
-                                 }  
-                            </div>
-                        </> 
-                        }
-                    </div> 
-                </div> 
+  console.log(
+    "Имеются ли в наличии размеры для данного товара (sizesAvailable) -",
+    sizesAvailable
+  );
+  console.log("Загружен продукт (product) -", product);
+  console.log("Список доступных размеров (sizeList) -", sizeList);
+  console.log("Выбран размер (selectedSize) - ", selectedSize);
+  console.log("showCart - ", showCart);
+  console.log("orderActive - ", orderActive);
+  console.log("LocalStorage orders - ", orders);
 
-            </section>
-        }
-        </>
-    )
-}
+  return (
+    <>
+      {product && (
+        <section className="catalog-item">
+          <h2 className="text-center">{product.title}</h2>
+          <div className="row product-container">
 
+            <div className="col-5">   
+              <ProductImage product={product}/>
+            </div>
+            
+            <div className="col-7">
+                <ProductInfo product={product}/>
 
+              {/* Если нет ни одного размера в наличии: */}
+              {!sizesAvailable && (
+                <h3 className="text-center">Товара нет в наличии</h3>
+              )}
 
+              {/* Если есть размеры в наличии: */}
+              {/* Список имеющихся в наличии размеров */}
+              {sizesAvailable && (
+                <>
+                  <SizesListPreview
+                    sizeList={sizeList}
+                    onSelectedSize={onSelectedSize}
+                    selectedSize={selectedSize}
+                  />
+                  {/* Блок "Количество" */}
+                  <div className="text-center product-info">
+                    Количество :
+                    <span className="btn-group btn-group-sm pl-2">
+                      <button className="btn btn-secondary" onClick={dec}>
+                        -
+                      </button>
+                      <span className="btn btn-outline-primary">{count}</span>
+                      <button className="btn btn-secondary" onClick={add}>
+                        +
+                      </button>
+                    </span>
+                  </div>
+                  {/* Корзина */}
+                  <div className="text-center btn-my">
+                    {/* { !selectedSize && <div className="btn btn-danger btn-block btn-lg">Заказать </div> }  */}
+                    {selectedSize && (
+                      <div className="button-block">
+                        <button
+                          onClick={onOrder}
+                          className={orderActive ? "button-product" : "btn"}
+                        >
+                          Заказать
+                        </button>
+
+                        <button
+                          onClick={showOrHideCart}
+                          className={showCart ? "button-product" : "btn"}
+                        >
+                          Показать/скрыть корзину
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+              {/* Если нажата кнопка "Заказать" показываем информацию о заказанном товаре */}
+              {orderActive && < OrderInfoMessage selectedSize={selectedSize} count={count} />}
+            </div>
+          </div>
+
+          {showCart && <Cart />}
+        </section>
+      )}
+    </>
+  );
+};
 
 // {
 //     "id": 33,
@@ -219,9 +255,8 @@ export const Product = ()=>{
 //     ]
 //   }
 
-
-
-{/* <section class="catalog-item">
+{
+  /* <section class="catalog-item">
         <h2 class="text-center">Босоножки 'MYER'</h2>
         <div class="row">
             <div class="col-5">
@@ -269,4 +304,5 @@ export const Product = ()=>{
                 <button class="btn btn-danger btn-block btn-lg">В корзину</button>
             </div>
         </div>
-    </section> */}
+    </section> */
+}

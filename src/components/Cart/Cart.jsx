@@ -1,87 +1,67 @@
 /* Корзина товаров */
 
-export const Cart = (props)=> {
+import "./style.scss";
+import { useEffect, useState } from "react";
+import { useLocalStorage } from "@uidotdev/usehooks";
+import { CartTable } from "./CartTable";
+import { CartForm } from "./CartForm";
+import { LoadSuccess } from "./LoadSuccess";
 
-  console.log("Корзина  props ", props)
+export const Cart = () => {
+  // Достаём из localStorage массив заказов orders:
+  const [orders, setOrders] = useLocalStorage("orders", []);
 
-  // Обратимся в localStorage
-  console.log("Cart : localStorage.getItem('name')-", localStorage.getItem('name'));
+  // Запуск сообщения об успешно загруженных на сервер данных:
+  const [successMessage, setSuccessMessage] = useState(false);
 
-    return (
+  // Удаляем заказ из таблицы:
+  const onDeleteOrder = (id) => {
+    setOrders((prev) => prev.filter((elem) => elem.orderId !== id));
+  };
 
-        <>
-          <section className="cart text-center">
-            <h2 className="text-center">Корзина</h2>
-            <table className="table table-bordered ">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Название</th>
-                  <th scope="col">Размер</th>
-                  <th scope="col">Кол-во</th>
-                  <th scope="col">Стоимость</th>
-                  <th scope="col">Итого</th>
-                  <th scope="col">Действия</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td scope="row">1</td>
-                  <td><a href="/products/1.html">Босоножки 'MYER'</a></td>
-                  <td>18 US</td>
-                  <td>1</td>
-                  <td>34 000 руб.</td>
-                  <td>34 000 руб.</td>
-                  <td><button className="btn btn-outline-danger btn-sm">Удалить</button></td>
-                </tr>
-                <tr>
-                  <td colSpan="5" className="text-right">Общая стоимость</td>
-                  <td>34 000 руб.</td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-          <section className="order">
-            <h2 className="text-center">Оформить заказ</h2>
-            {/* <div className="card" style="max-width: 30rem; margin: 0 auto;"> */}
-            <div className="card card-form" style={{maxWidth: '130rem', margin:' 0 auto'}}>
-              <form className="card-body">
-                <div className="form-group">
-                  <label htmlFor="phone">Телефон : </label>
-                  <input className="form-control" id="phone" placeholder="Ваш телефон"/>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="address">Адрес доставки : </label>
-                  <input className="form-control" id="address" placeholder="Адрес доставки"/>
-                </div>
-                <div className="form-group form-check">
-                  <input type="checkbox" className="form-check-input" id="agreement"/>
-                  <label className="form-check-label" htmlFor="agreement">Согласен с правилами доставки</label>
-                </div>
-                <button type="submit" className="btn btn-outline-secondary btn-form">Оформить</button>
-              </form>
-            </div>
-          </section>
-        
-        </>
+  // Функция очистки LocalStorage:
+  const clearLocalStorage = () => {
+    localStorage.clear();
+    // обнуляем список заказов:
+    setOrders([]);
+  };
 
-    )
-}
+  // Функция показа сообщения об успешном оформлении заказа на сервере :
+  const successLoadOrder = ()=>{
+    setSuccessMessage(true)
+  }
 
-// Блок оформления заказа позволяет оформить заказ — POST http://localhost:7070/api/order.
+  // Функция скрытия сообщения об успешном оформлении заказа на сервере :
+  const hideMessage = ()=>{
+    setSuccessMessage(false)
+  }
 
-// В теле — JSON:
+  console.log("Cart orders-", orders);
 
-// {
-//   "owner": {
-//     "phone": "+7xxxxxxxxxxx",
-//     "address": "Moscow City"
-//   },
-//   "items": [
-//     {
-//       "id": 1,
-//       "price": 34000,
-//       "count": 1
-//     }
-//   ]
-// }
+  return (
+    <>  
+        <section className="cart text-center">
+          {/* {orders.length < 1 && <h3 className="non-orders"> В корзине нет товаров </h3>}   */}
+          <h2 className="text-center">Корзина</h2>
+          {orders.length < 1 && (
+            <h3 className="non-orders text-center"> В корзине нет товаров </h3>
+          )}
+          {orders.length >= 1 && (
+            <>
+              <CartTable orders={orders} onDeleteOrder={onDeleteOrder} />
+              <CartForm 
+                  orders={orders} 
+                  clearLocalStorage={clearLocalStorage} 
+                  successLoadOrder={successLoadOrder}
+                  hideMessage={hideMessage}
+                  />
+            </>
+          )}
+          {/* При успешной отправки заказа на сервер показываем сообщение  */}
+          { successMessage && <LoadSuccess/>}
+        </section>
+      </>
+
+ 
+  );
+};
