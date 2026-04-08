@@ -35,33 +35,63 @@ export const Product = () => {
   // Состояние для массива объектов заказов:
   const [orders, setOrders] = useLocalStorage("orders", []);
 
-  // Функция загрузки данных о текущем товарк по сети:
-  const getProduct = async () => {
-    const resp = await fetch(`${BASE_URL}/api/items/${id}`);
-    if (resp.ok) {
-      const data = await resp.json();
-      setProduct(data);
-      // console.log("Объект товара data -", data);
+  // // Функция загрузки данных о текущем товарк по сети:
+  // const getProduct = async () => {
+  //   const resp = await fetch(`${BASE_URL}/api/items/${id}`);
+  //   if (resp.ok) {
+  //     const data = await resp.json();
+  //     setProduct(data);
+  //     // console.log("Объект товара data -", data);
 
-      // Проверка на наличие хотя бы одного размера для данного товара:
-      const available = data.sizes.some((item) => item.available === true);
-      setSizesAvailable(available);
+  //     // Проверка на наличие хотя бы одного размера для данного товара:
+  //     const available = data.sizes.some((item) => item.available === true);
+  //     setSizesAvailable(available);
 
-      // Если размеры для данного товара есть в наличии , то :
-      if (available) {
-        // Берём массив доступных размеров
-        data.sizes.map((item) => {
-          // выбираем те, что имеются в наличии:
-          if (item.available) {
-            // Заполняем список размеров товара значениями :
-            sizeListWorking.push(item.size);
+  //     // Если размеры для данного товара есть в наличии , то :
+  //     if (available) {
+  //       // Берём массив доступных размеров
+  //       data.sizes.map((item) => {
+  //         // выбираем те, что имеются в наличии:
+  //         if (item.available) {
+  //           // Заполняем список размеров товара значениями :
+  //           sizeListWorking.push(item.size);
+  //         }
+  //       });
+  //       // Фиксируем имеющийся список размеров товара в sizeList:
+  //       setSizeList(sizeListWorking);
+  //     }
+  //   }
+  // };
+
+      // Функция загрузки данных о текущем товарк по сети. 2 ВАРИАНТ:
+      const getProduct = async () => {
+        const resp = await fetch(`${BASE_URL}/api/items/${id}`);
+        if (resp.ok) {
+          const data = await resp.json();
+          setProduct(data);
+          // console.log("Объект товара data -", data);
+    
+          // Проверка на наличие хотя бы одного размера для данного товара:
+          const available = data.sizes.some((item) => item.available === true);
+          setSizesAvailable(available);
+    
+          // Если размеры для данного товара есть в наличии , то :
+          if (available) {
+            // Берём массив доступных размеров
+            data.sizes.map((item) => {
+              // выбираем те, что имеются в наличии:
+              if (item.available) {
+                // Заполняем список размеров товара значениями :
+                // sizeListWorking.push(item.size);
+                setSizeList( prev => [...prev,item.size ])
+  
+              }
+            });
+            // Фиксируем имеющийся список размеров товара в sizeList:
+            // setSizeList(sizeListWorking);
           }
-        });
-        // Фиксируем имеющийся список размеров товара в sizeList:
-        setSizeList(sizeListWorking);
-      }
-    }
-  };
+        }
+      };
 
   // Загружаем данные о текущем товаре при загрузке страницы:
   useEffect(() => {

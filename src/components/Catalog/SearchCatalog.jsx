@@ -27,7 +27,7 @@ export const SearchCatalog = ({ categories, goodsAll }) => {
   // запишем их в search.title:
   useEffect(() => {
     // console.log("SearchCatalog location.state - ", location.state);
-    if (location.state.valueSearch) {
+    if (location.state?.valueSearch) {
       setSearch({ title: location.state.valueSearch });
     }
   }, [location]);
