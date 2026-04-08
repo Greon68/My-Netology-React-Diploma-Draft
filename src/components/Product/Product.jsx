@@ -8,14 +8,10 @@ import { Cart } from "../Cart/Cart";
 import { OrderInfoMessage } from "./OrderInfoMessage";
 import { ProductInfo } from "./ProductInfo";
 import { ProductImage } from "./ProductImage";
-import {useParams, useNavigate} from "react-router";
-
-//Рабочий массив размеров, имеющихся в наличии для данного продукта:
-const sizeListWorking = [];
+import { useParams, useNavigate } from "react-router";
 
 export const Product = () => {
-  const{id} = useParams();
-
+  const { id } = useParams();
   // Объект товара:
   const [product, setProduct] = useState({});
   // Счётчик количества заказываемого товара:
@@ -35,63 +31,32 @@ export const Product = () => {
   // Состояние для массива объектов заказов:
   const [orders, setOrders] = useLocalStorage("orders", []);
 
-  // // Функция загрузки данных о текущем товарк по сети:
-  // const getProduct = async () => {
-  //   const resp = await fetch(`${BASE_URL}/api/items/${id}`);
-  //   if (resp.ok) {
-  //     const data = await resp.json();
-  //     setProduct(data);
-  //     // console.log("Объект товара data -", data);
+  // Функция загрузки данных о текущем товаре по сети:
+  const getProduct = async () => {
+    const resp = await fetch(`${BASE_URL}/api/items/${id}`);
+    if (resp.ok) {
+      const data = await resp.json();
+      setProduct(data);
+      // console.log("Объект товара data -", data);
 
-  //     // Проверка на наличие хотя бы одного размера для данного товара:
-  //     const available = data.sizes.some((item) => item.available === true);
-  //     setSizesAvailable(available);
+      // Проверка на наличие хотя бы одного размера для данного товара:
+      const available = data.sizes.some((item) => item.available === true);
+      setSizesAvailable(available);
 
-  //     // Если размеры для данного товара есть в наличии , то :
-  //     if (available) {
-  //       // Берём массив доступных размеров
-  //       data.sizes.map((item) => {
-  //         // выбираем те, что имеются в наличии:
-  //         if (item.available) {
-  //           // Заполняем список размеров товара значениями :
-  //           sizeListWorking.push(item.size);
-  //         }
-  //       });
-  //       // Фиксируем имеющийся список размеров товара в sizeList:
-  //       setSizeList(sizeListWorking);
-  //     }
-  //   }
-  // };
-
-      // Функция загрузки данных о текущем товарк по сети. 2 ВАРИАНТ:
-      const getProduct = async () => {
-        const resp = await fetch(`${BASE_URL}/api/items/${id}`);
-        if (resp.ok) {
-          const data = await resp.json();
-          setProduct(data);
-          // console.log("Объект товара data -", data);
-    
-          // Проверка на наличие хотя бы одного размера для данного товара:
-          const available = data.sizes.some((item) => item.available === true);
-          setSizesAvailable(available);
-    
-          // Если размеры для данного товара есть в наличии , то :
-          if (available) {
-            // Берём массив доступных размеров
-            data.sizes.map((item) => {
-              // выбираем те, что имеются в наличии:
-              if (item.available) {
-                // Заполняем список размеров товара значениями :
-                // sizeListWorking.push(item.size);
-                setSizeList( prev => [...prev,item.size ])
-  
-              }
-            });
-            // Фиксируем имеющийся список размеров товара в sizeList:
-            // setSizeList(sizeListWorking);
+      // Если размеры для данного товара есть в наличии , то :
+      if (available) {
+        // Берём массив доступных размеров
+        data.sizes.map((item) => {
+          // выбираем те, что имеются в наличии:
+          if (item.available) {
+            // Заполняем список размеров товара значениями :
+            // sizeListWorking.push(item.size);
+            setSizeList((prev) => [...prev, item.size]);
           }
-        }
-      };
+        });
+      }
+    }
+  };
 
   // Загружаем данные о текущем товаре при загрузке страницы:
   useEffect(() => {
@@ -187,13 +152,12 @@ export const Product = () => {
         <section className="catalog-item">
           <h2 className="text-center">{product.title}</h2>
           <div className="row product-container">
-
-            <div className="col-5">   
-              <ProductImage product={product}/>
+            <div className="col-5">
+              <ProductImage product={product} />
             </div>
-            
+
             <div className="col-7">
-                <ProductInfo product={product}/>
+              <ProductInfo product={product} />
 
               {/* Если нет ни одного размера в наличии: */}
               {!sizesAvailable && (
@@ -246,7 +210,9 @@ export const Product = () => {
                 </>
               )}
               {/* Если нажата кнопка "Заказать" показываем информацию о заказанном товаре */}
-              {orderActive && < OrderInfoMessage selectedSize={selectedSize} count={count} />}
+              {orderActive && (
+                <OrderInfoMessage selectedSize={selectedSize} count={count} />
+              )}
             </div>
           </div>
 
