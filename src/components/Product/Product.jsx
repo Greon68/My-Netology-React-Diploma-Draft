@@ -5,7 +5,6 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import { BASE_URL } from "../../config/api";
 import { SizesListPreview } from "./SizesListPreview";
 import { Cart } from "../Cart/Cart";
-import { OrderInfoMessage } from "./OrderInfoMessage";
 import { ProductInfo } from "./ProductInfo";
 import { ProductImage } from "./ProductImage";
 import { useParams, useNavigate } from "react-router";
@@ -27,9 +26,6 @@ export const Product = () => {
 
   // Показать/скрыть карзину товаров:
   const [showCart, setShowCart] = useState(false);
-
-  // Нажата ли кнопка "Заказать":
-  // const [orderActive, setOrderActive] = useState(false);
 
   // Подключаем навигацию:
   const navigate = useNavigate()
@@ -110,8 +106,6 @@ export const Product = () => {
     if (count >= 10) {
       setCount(10);
     }
-    // устанавливаем ordreActiv в false
-    // setOrderActive(false);
   };
 
   const dec = () => {
@@ -119,27 +113,17 @@ export const Product = () => {
     if (count <= 1) {
       setCount(1);
     }
-    // устанавливаем ordreActiv в false
-    // setOrderActive(false);
   };
 
   // Сохраняем выбранный размер товара:
   const onSelectedSize = (size) => {
     setSelectedSize(size);
-    // устанавливаем ordreActiv в false
-    // setOrderActive(false);
   };
-
-  // Обработчик клика на кнопку "Показать/скрыть корзину":
-  // const showOrHideCart = () => {
-  //   setShowCart((prev) => !prev);
-  // };
 
   /* Клик по кнопке "Заказать"- устанавливаем ordreActiv в true;
     сохраняем объект заказа в localStorage,
     переходим в корзину:
   */
- 
   const onOrder = () => {
     addToOrderInLocalStorage();
     navigate(CART_ROUT);
@@ -153,8 +137,6 @@ export const Product = () => {
   console.log("Загружен продукт (product) -", product);
   console.log("Список доступных размеров (sizeList) -", sizeList);
   console.log("Выбран размер (selectedSize) - ", selectedSize);
-  // console.log("showCart - ", showCart);
-  // console.log("orderActive - ", orderActive);
   console.log("LocalStorage orders - ", orders);
 
   return (
@@ -200,7 +182,6 @@ export const Product = () => {
 
                   {/* Корзина */}
                   <div className="text-center btn-my">
-                    {/* { !selectedSize && <div className="btn btn-danger btn-block btn-lg">Заказать </div> }  */}
                     {selectedSize && (
                       <div className="button-block">
                         <button
@@ -209,26 +190,13 @@ export const Product = () => {
                         >
                           Заказать
                         </button>
-
-                        {/* <button
-                          onClick={showOrHideCart}
-                          className={showCart ? "button-product" : "btn"}
-                        >
-                          Показать/скрыть корзину
-                        </button> */}
                       </div>
                     )}
                   </div>
                 </>
-              )}
-              {/* Если нажата кнопка "Заказать" показываем информацию о заказанном товаре */}
-              {/* {orderActive && (
-                <OrderInfoMessage selectedSize={selectedSize} count={count} />
-              )} */}
+              )} 
             </div>
           </div>
-
-          {/* {showCart && <Cart />} */}
         </section>
       )}
     </>
