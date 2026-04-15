@@ -38,9 +38,12 @@ export const SearchCatalog = ({ categories, goodsAll }) => {
   const [selected, setSelected] = useState({ id: 1, title: "Все" });
 
   // Добавляем категорию "Все" в массив категорий
-  if (categories.length <= 4) {
+  // if (categories.length <= 4) {
+  //   categories.unshift({ id: 1, title: "Все" });
+  // }
+  useEffect(()=>{
     categories.unshift({ id: 1, title: "Все" });
-  }
+  },[])
 
   // Данные для показа/скрытия кнопки "Загрузить ещё".
   // Сохраняем  в состоянии длину массива подгружаемых данных - countCurrentGoods:
@@ -67,6 +70,7 @@ export const SearchCatalog = ({ categories, goodsAll }) => {
   const loadeMoreData = (data) => {
     console.log(" Догрузка данных в функцию loadeMoreData -", data);
     setPreviewList([...previewList, ...data]);
+    // setPreviewList(data);
 
     setCountCurrentGoods(data.length);
   };
@@ -107,7 +111,7 @@ export const SearchCatalog = ({ categories, goodsAll }) => {
     } else {
       onFetchSearch(selected.id);
     }
-
+    // ???????????????? :
     if (location.state.valueSearch) {
       location.state.valueSearch = "";
     }
