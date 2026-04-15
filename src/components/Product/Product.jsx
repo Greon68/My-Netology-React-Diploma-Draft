@@ -66,48 +66,11 @@ export const Product = () => {
     getProduct();
   }, []);
 
-  // // Функция добавления заказа в LocalStorage:
-  // const addToOrderInLocalStorage = () => {
-  //   // Фиксируем пару "товар-размер" для текущего заказа:
-  //   const orderId = product.id + " : " + selectedSize;
-  //   // console.log('orderId-',orderId , 'typeOf orderId- ', typeof orderId );
-
-  //   // Определяем полную стоимость для текущего заказа:
-  //   const priceTotal = product.price * count;
-
-  //   // Определяем , есть ли в хранилище заказ для данной пары:
-  //   const result = orders.find((order) => order.orderId === orderId);
-  //   console.log("result -", result);
-
-  //   // Если уже есть , то повторно заказ не сохраняем в хранилище
-  //   if (result) {
-  //     return;
-  //   }
-  //   // Иначе, сохраняем объект заказа в localStorage и в переменной orders
-  //   else {
-  //     setOrders([
-  //       ...orders,
-  //       {
-  //         orderId: orderId,
-  //         id: product.id,
-  //         title: product.title,
-  //         price: product.price,
-  //         size: selectedSize,
-  //         count: count,
-  //         priceTotal: priceTotal,
-  //       },
-  //     ]);
-  //   }
-  // };
-
   // Функция добавления заказа в LocalStorage:
   const addToOrderInLocalStorage = () => {
     // Фиксируем пару "товар-размер" для текущего заказа:
     const orderId = product.id + " : " + selectedSize;
     // console.log('orderId-',orderId , 'typeOf orderId- ', typeof orderId );
-
-    // Определяем полную стоимость для текущего заказа:
-    // const priceTotal = product.price * count;
 
     // Определяем , есть ли в хранилище заказ для данной пары:
     const result = orders.find((order) => order.orderId === orderId);
