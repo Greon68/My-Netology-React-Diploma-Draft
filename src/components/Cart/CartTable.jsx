@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router";
 
 export const CartTable = (props) => {
   console.log("Cart table props-", props);
   const { orders, onDeleteOrder } = props;
 
   // Общее количество товаров в корзине и общая стоимость заказа через объект:
-  
+
   // РАБОТАЕТ НЕ КОРРЕКТНО. ВЫЗЫВАЕТ БЕСКОНЕЧНУЮ ПЕРЕРИСОВКУ КОМПОНЕНТА !!!
 
   // const[total, setTotal] = useState({
@@ -62,7 +63,11 @@ export const CartTable = (props) => {
             {orders.map((order, index) => (
               <tr key={order.orderId}>
                 <td scope="row">{index + 1}</td>
-                <td> {order.title} </td>
+                <td>
+                  <Link to={`/catalog/${order.id}`} >
+                    {order.title}
+                  </Link>                  
+                </td>
                 <td>{order.size}</td>
                 <td>{order.count}</td>
                 <td>{order.price}</td>
@@ -95,3 +100,4 @@ export const CartTable = (props) => {
     </>
   );
 };
+
